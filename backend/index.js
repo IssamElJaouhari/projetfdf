@@ -59,6 +59,40 @@ app.post("/register", async (req, res) => {
     }
 });
 
+//login route
+
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body
+
+        const userexst = await User.findOne({ email })
+
+        console.log("ikram and fatima ZAHRA LOG :", userexst)
+
+
+        if (!userexst) {
+            res.status(400); express.json({ message: "invalid  data" })
+        }
+
+        const ispassmatch = await bcrypt.compare(password, userexst.password)
+        if (!ispassmatch) {
+            res.status(400); express.json({ message: "invalid  data" })
+        }
+
+        const tokengmc = jwt.sign(
+            { id: userexst._id }, process.env.JWT_SECRET_KEY,
+            { expiresIn: process.env.EXPIRE_JWT }
+        )
+        res.json({ message: "login succcessfully", tokengmc })
+
+    } catch (error) {
+        console.log("error at login", { cause: error })
+        res.status(500).json({ message: "errror server" })
+    }
+
+})
+
+
 
 
 
