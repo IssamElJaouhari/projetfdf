@@ -14,7 +14,6 @@ app.use(express.json())
 
 
 app.use("/api/auth", routesAuth)
-app.use("/api/product", routesProducts)
 
 
 app.get("/", (req, res) => {
