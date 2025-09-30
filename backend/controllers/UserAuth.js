@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const User = require("../models/user.js")
 
 
+
+
 const registrUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -54,7 +56,7 @@ const loginUser = async (req, res) => {
 
         const userexst = await User.findOne({ email })
 
-        console.log("ikram and fatima ZAHRA LOG :", userexst)
+        // console.log("ikram and fatima ZAHRA LOG :", userexst)
 
 
         if (!userexst) {
@@ -70,7 +72,15 @@ const loginUser = async (req, res) => {
             { id: userexst._id }, process.env.JWT_SECRET_KEY,
             { expiresIn: process.env.EXPIRE_JWT }
         )
-        res.json({ message: "login succcessfully", tokengmc })
+        res.json({
+            message: "login succcessfully",
+            tokengmc,
+            user: {
+                _id: userexst._id,
+                name: userexst.name,
+                email: userexst.email,
+            }
+        })
 
     } catch (error) {
         console.log("error at login", { cause: error })
