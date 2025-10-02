@@ -33,7 +33,7 @@ const registrUser = async (req, res) => {
 
         // 5️⃣ Return response (avoid sending password back)
         res.status(201).json({
-            message: "User created successfully",
+            message: "User registered successfully",
             user: {
                 _id: newUser._id,
                 name: newUser.name,
@@ -53,28 +53,25 @@ const registrUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body
-
         const userexst = await User.findOne({ email })
-
-        // console.log("ikram and fatima ZAHRA LOG :", userexst)
 
 
         if (!userexst) {
-            res.status(400); express.json({ message: "invalid  data" })
+            return res.status(400).json({ message: "Invalid email or password" })
         }
 
         const ispassmatch = await bcrypt.compare(password, userexst.password)
         if (!ispassmatch) {
-            res.status(400); express.json({ message: "invalid  data" })
+            return res.status(400).json({ message: "Invalid email or password" })
         }
 
-        const tokengmc = jwt.sign(
+        const token = jwt.sign(
             { id: userexst._id }, process.env.JWT_SECRET_KEY,
             { expiresIn: process.env.EXPIRE_JWT }
         )
         res.json({
-            message: "login succcessfully",
-            tokengmc,
+            message: "login successfully",
+            token,
             user: {
                 _id: userexst._id,
                 name: userexst.name,
@@ -83,8 +80,8 @@ const loginUser = async (req, res) => {
         })
 
     } catch (error) {
-        console.log("error at login", { cause: error })
-        res.status(500).json({ message: "errror server" })
+        console.error("Error during login:", error)
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
